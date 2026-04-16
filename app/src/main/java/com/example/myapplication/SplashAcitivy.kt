@@ -1,3 +1,5 @@
+package com.example.myapplication
+
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
@@ -9,21 +11,23 @@ import android.os.Looper
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 
+// FIX 1: Added missing package declaration
+// FIX 2: setContentView now uses correct layout name (loadingscreen.xml → R.layout.loadingscreen)
+// FIX 3: Intent navigates to MainActivity (Login), not LoginActivity (which doesn't exist)
+
 class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash)
+        setContentView(R.layout.loadingscreen)  // FIX: was R.layout.activity_splash (file doesn't exist)
 
-        // Animate loading dots
         animateLoadingDots()
 
-        // Simulate loading time (replace with your actual loading logic)
         Handler(Looper.getMainLooper()).postDelayed({
-            // Navigate to LoginActivity
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish() // Close splash screen
-        }, 3000) // 3 seconds delay
+            // FIX: Navigate to MainActivity (the login screen)
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+        }, 3000)
     }
 
     private fun animateLoadingDots() {
@@ -31,7 +35,6 @@ class SplashActivity : AppCompatActivity() {
         val dot2: View = findViewById(R.id.dot2)
         val dot3: View = findViewById(R.id.dot3)
 
-        // Infinite loading animation
         val animator1 = ObjectAnimator.ofFloat(dot1, "alpha", 1f, 0.4f)
         val animator2 = ObjectAnimator.ofFloat(dot2, "alpha", 0.4f, 1f, 0.4f)
         val animator3 = ObjectAnimator.ofFloat(dot3, "alpha", 0.4f, 1f)
@@ -42,7 +45,7 @@ class SplashActivity : AppCompatActivity() {
 
         animatorSet.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
-                animatorSet.start() // Loop infinitely
+                animatorSet.start()
             }
         })
         animatorSet.start()

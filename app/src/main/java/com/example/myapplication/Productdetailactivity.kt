@@ -5,27 +5,31 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+
+// FIX 1: setContentView uses R.layout.activityproductdetail (the actual file is activityproductdetail.xml)
+// FIX 2: All Intent extras received from HomeActivity are properly read and displayed
+// FIX 3: "Add to Cart" passes correct keys expected by CartActivity
+// FIX 4: "Buy Now" passes correct keys expected by CheckoutActivity
 
 class ProductDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_product_detail)
+        setContentView(R.layout.activityproductdetail)  // FIX: was R.layout.activity_product_detail
 
-        // ✅ RECEIVE data passed via Intent from HomeActivity (Dashboard)
+        // Receive Intent data sent from HomeActivity
         val productName    = intent.getStringExtra("product_name")    ?: "Unknown Product"
-        val productPrice   = intent.getDoubleExtra("product_price", 0.0)
-        val productRating  = intent.getFloatExtra("product_rating", 0f)
+        val productPrice   = intent.getDoubleExtra("product_price",   0.0)
+        val productRating  = intent.getFloatExtra("product_rating",   0f)
         val productSeller  = intent.getStringExtra("product_seller")  ?: "Lazada Seller"
-        val productImageId = intent.getIntExtra("product_image_res", R.drawable.img)
+        val productImageId = intent.getIntExtra("product_image_res",  R.drawable.img)
 
-        // Bind data to views
-        findViewById<TextView>(R.id.tvProductName).text    = productName
-        findViewById<TextView>(R.id.tvProductPrice).text   = "₱ ${"%.2f".format(productPrice)}"
-        findViewById<TextView>(R.id.tvProductRating).text  = "⭐ $productRating / 5.0"
-        findViewById<TextView>(R.id.tvProductSeller).text  = "Sold by: $productSeller"
+        // Bind to views
+        findViewById<TextView>(R.id.tvProductName).text   = productName
+        findViewById<TextView>(R.id.tvProductPrice).text  = "₱ ${"%.2f".format(productPrice)}"
+        findViewById<TextView>(R.id.tvProductRating).text = "⭐ $productRating / 5.0"
+        findViewById<TextView>(R.id.tvProductSeller).text = "Sold by: $productSeller"
         findViewById<ImageView>(R.id.ivProductImage).setImageResource(productImageId)
 
         // Back button
@@ -33,23 +37,25 @@ class ProductDetailActivity : AppCompatActivity() {
             finish()
         }
 
-        // Add to Cart button → passes product data to CartActivity
+        // Add to Cart → navigate to CartActivity with product data
         findViewById<Button>(R.id.btnAddToCart).setOnClickListener {
             val intent = Intent(this, CartActivity::class.java).apply {
                 putExtra("cart_product_name",  productName)
                 putExtra("cart_product_price", productPrice)
+                putExtra("cart_product_seller", productSeller)
                 putExtra("cart_product_qty",   1)
             }
             startActivity(intent)
         }
 
-        // Buy Now button → skips cart, goes straight to CheckoutActivity
+        // Buy Now → skip cart, go straight to CheckoutActivity
         findViewById<Button>(R.id.btnBuyNow).setOnClickListener {
             val intent = Intent(this, CheckoutActivity::class.java).apply {
                 putExtra("checkout_product_name",  productName)
                 putExtra("checkout_product_price", productPrice)
                 putExtra("checkout_seller",        productSeller)
                 putExtra("checkout_qty",           1)
+                putExtra("checkout_total",         productPrice * 1)
             }
             startActivity(intent)
         }
