@@ -5,59 +5,49 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-
-// FIX 1: setContentView uses R.layout.activityproductdetail (the actual file is activityproductdetail.xml)
-// FIX 2: All Intent extras received from HomeActivity are properly read and displayed
-// FIX 3: "Add to Cart" passes correct keys expected by CartActivity
-// FIX 4: "Buy Now" passes correct keys expected by CheckoutActivity
 
 class ProductDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activityproductdetail)  // FIX: was R.layout.activity_product_detail
+        setContentView(R.layout.activityproductdetail)
 
-        // Receive Intent data sent from HomeActivity
-        val productName    = intent.getStringExtra("product_name")    ?: "Unknown Product"
-        val productPrice   = intent.getDoubleExtra("product_price",   0.0)
-        val productRating  = intent.getFloatExtra("product_rating",   0f)
-        val productSeller  = intent.getStringExtra("product_seller")  ?: "Lazada Seller"
-        val productImageId = intent.getIntExtra("product_image_res",  R.drawable.img)
+        // 1. RECEIVE: Data from Dashboard (using the Product object we sent)
+        // We use getParcelableExtra because we sent the whole object
+        val product = intent.getParcelableExtra<Product>("PRODUCT_DATA")
 
-        // Bind to views
-        findViewById<TextView>(R.id.tvProductName).text   = productName
-        findViewById<TextView>(R.id.tvProductPrice).text  = "₱ ${"%.2f".format(productPrice)}"
-        findViewById<TextView>(R.id.tvProductRating).text = "⭐ $productRating / 5.0"
-        findViewById<TextView>(R.id.tvProductSeller).text = "Sold by: $productSeller"
-        findViewById<ImageView>(R.id.ivProductImage).setImageResource(productImageId)
+        if (product != null) {
+            // DISPLAY: Map data to your XML IDs
+            findViewById<TextView>(R.id.tvProductName).text   = product.name
+            findViewById<TextView>(R.id.tvProductPrice).text  = "₱ ${"%.2f".format(product.price)}"
+            findViewById<TextView>(R.id.tvProductRating).text = "⭐ ${product.rating} / 5.0"
+            findViewById<TextView>(R.id.tvProductSeller).text = "Sold by: ${product.seller}"
+            findViewById<ImageView>(R.id.ivProductImage).setImageResource(product.imageRes)
 
-        // Back button
-        findViewById<ImageView>(R.id.btnBack).setOnClickListener {
-            finish()
-        }
+            // 2. BACK BUTTON
+            findViewById<ImageView>(R.id.btnBack).setOnClickListener { finish() }
 
-        // Add to Cart → navigate to CartActivity with product data
-        findViewById<Button>(R.id.btnAddToCart).setOnClickListener {
-            val intent = Intent(this, CartActivity::class.java).apply {
-                putExtra("cart_product_name",  productName)
-                putExtra("cart_product_price", productPrice)
-                putExtra("cart_product_seller", productSeller)
-                putExtra("cart_product_qty",   1)
+            // 3. ADD TO GLOBAL CART
+            findViewById<Button>(R.id.btnAddToCart).setOnClickListener {
+                CartManager.cartList.add(product)
+
+                Toast.makeText(this, "${product.name} added to cart! 🛒", Toast.LENGTH_SHORT).show()
+
+                // Optional: Close this screen so user can pick more items on Dashboard
+                finish()
             }
-            startActivity(intent)
-        }
 
-        // Buy Now → skip cart, go straight to CheckoutActivity
-        findViewById<Button>(R.id.btnBuyNow).setOnClickListener {
-            val intent = Intent(this, CheckoutActivity::class.java).apply {
-                putExtra("checkout_product_name",  productName)
-                putExtra("checkout_product_price", productPrice)
-                putExtra("checkout_seller",        productSeller)
-                putExtra("checkout_qty",           1)
-                putExtra("checkout_total",         productPrice * 1)
+            // 4. BUY NOW (Straight to Checkout with just this one item)
+            findViewById<Button>(R.id.btnBuyNow).setOnClickListener {
+                val intent = Intent(this, CheckoutActivity::class.java).apply {
+                    // We put this single item into a list because Checkout expects a list
+                    val singleItemList = arrayListOf(product)
+                    putParcelableArrayListExtra("SELECTED_PRODUCTS", singleItemList)
+                }
+                startActivity(intent)
             }
-            startActivity(intent)
         }
     }
 }

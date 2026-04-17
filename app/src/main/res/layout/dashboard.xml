@@ -6,55 +6,96 @@
     android:layout_height="match_parent"
     android:background="#F5F5F5">
 
-    <!-- =====================================================
-         APP BAR — collapses on scroll (UNCHANGED)
-         ===================================================== -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
-        app:liftOnScroll="true"
-        app:liftOnScrollColor="#F57224"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
+        app:liftOnScroll="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_scrollFlags="scroll|enterAlways|snap"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:titleEnabled="false">
 
-            <!-- Promo Strip + Full Header (UNCHANGED) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_collapseMode="parallax">
 
-                <!-- [YOUR EXISTING PROMO STRIP] -->
-                <LinearLayout android:id="@+id/promoStrip" android:layout_width="match_parent" android:layout_height="30dp" android:background="#FFFFFF" android:orientation="horizontal" android:gravity="center_vertical" android:paddingHorizontal="12dp">
-                    <!-- [KEEP ALL 4 TEXTVIEWS] -->
+                <LinearLayout
+                    android:id="@+id/promoStrip"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:background="#FFFFFF"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="12dp">
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Free Shipping" android:textSize="10sp" android:layout_marginEnd="10dp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Vouchers" android:textSize="10sp"/>
                 </LinearLayout>
 
-                <!-- [YOUR EXISTING HEADER FULL] -->
-                <LinearLayout android:id="@+id/headerFull" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/lazada_gradient_header" android:orientation="vertical" android:padding="10dp">
-                    <!-- [KEEP ALL SEARCH + LOGO] -->
-                </LinearLayout>
+                <RelativeLayout
+                    android:id="@+id/headerFull"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#F57224"
+                    android:padding="10dp">
 
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_toStartOf="@id/btnCartIcon"
+                        android:layout_marginEnd="10dp"
+                        app:boxCornerRadiusTopStart="8dp"
+                        app:boxCornerRadiusTopEnd="8dp"
+                        app:boxCornerRadiusBottomStart="8dp"
+                        app:boxCornerRadiusBottomEnd="8dp">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etSearchFull"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Search Lazada"
+                            android:background="@android:color/transparent"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <ImageView
+                        android:id="@+id/btnCartIcon"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:src="@android:drawable/ic_menu_agenda"
+                        app:tint="#FFFFFF" />
+
+                    <Button android:id="@+id/btnSearchFull" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+                </RelativeLayout>
             </LinearLayout>
 
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
-        <androidx.appcompat.widget.Toolbar android:id="@+id/compactToolbar" android:layout_width="match_parent" android:layout_height="52dp" android:background="@drawable/lazada_gradient_header" android:paddingHorizontal="10dp" app:layout_scrollFlags="noScroll">
-        </androidx.appcompat.widget.Toolbar>
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/compactToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                android:visibility="gone">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etSearchCompact"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Search..."/>
+                <Button android:id="@+id/btnSearchCompact" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone"/>
+            </androidx.appcompat.widget.Toolbar>
 
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- SCROLLABLE CONTENT -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="60dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -62,118 +103,79 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- ===== HERO BANNER (UNCHANGED) ===== -->
-            <FrameLayout android:layout_width="match_parent" android:layout_height="180dp" android:background="#111111">
-                <!-- [KEEP ALL HERO CONTENT] -->
-            </FrameLayout>
-
-            <!-- ===== QUICK LINKS (UNCHANGED) ===== -->
-            <LinearLayout android:id="@+id/btnTopUp" android:layout_width="0dp" android:layout_height="72dp" android:layout_weight="1">
-                <!-- [KEEP TOP UP + LAZMALL] -->
-            </LinearLayout>
-
-            <!-- ===== FLASH SALE (UNCHANGED HEADER + HORIZONTAL SCROLL) ===== -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:background="#FFFFFF"
-                android:layout_marginTop="8dp"
-                android:paddingTop="12dp">
-
-                <!-- FLASH SALE HEADER + TIMER (UNCHANGED) -->
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingHorizontal="12dp" android:layout_marginBottom="10dp">
-                    <!-- [KEEP TIMER + SHOP ALL] -->
+                android:paddingVertical="10dp">
+                <LinearLayout android:id="@+id/btnTopUp" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+                    <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_launcher_foreground"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Top Up" android:textSize="12sp"/>
                 </LinearLayout>
-
-                <!-- HORIZONTAL SCROLL PRODUCTS (UNCHANGED) -->
-                <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:scrollbars="none" android:paddingHorizontal="12dp" android:paddingBottom="12dp" android:clipToPadding="false">
-                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
-                        <!-- [KEEP 3 PRODUCT CARDS] -->
-                    </LinearLayout>
-                </HorizontalScrollView>
-
+                <LinearLayout android:id="@+id/btnLazMall" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:gravity="center" android:orientation="vertical">
+                    <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_launcher_foreground"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="LazMall" android:textSize="12sp"/>
+                </LinearLayout>
             </LinearLayout>
 
-            <!-- 🔥🔥 NEW FLASH SALE LISTVIEW SECTION 🔥🔥 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
+                android:background="#FFFFFF"
+                android:padding="12dp"
+                android:layout_marginTop="8dp">
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Flash Sale" android:textStyle="bold" android:textColor="#F57224"/>
+                <TextView android:id="@+id/tvTimerHours" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="#000" android:textColor="#FFF" android:text="00" android:layout_marginStart="8dp"/>
+                <TextView android:id="@+id/tvTimerMins" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="#000" android:textColor="#FFF" android:text="00" android:layout_marginStart="4dp"/>
+                <TextView android:id="@+id/tvTimerSecs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="#000" android:textColor="#FFF" android:text="00" android:layout_marginStart="4dp"/>
+                <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1"/>
+                <TextView android:id="@+id/tvShopAll" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="SHOP ALL >" android:textSize="12sp" android:textColor="#F57224"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:background="#FFFFFF"
                 android:orientation="vertical">
-
-                <!-- NEW Flash Sale List Header -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="14dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="🛒 MORE FLASH SALE ITEMS"
-                        android:textColor="#1A1A1A"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvViewAllFlashSale"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="VIEW ALL >"
-                        android:textColor="#F57224"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:clickable="true"
-                        android:focusable="true" />
-
-                </LinearLayout>
-
-                <!-- NEW ListView (scrollable products) -->
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="16dp" android:text="⚡ FLASH SALE" android:textStyle="bold" />
                 <ListView
                     android:id="@+id/listViewFlashSale"
                     android:layout_width="match_parent"
-                    android:layout_height="320dp"
-                    android:divider="@android:color/transparent"
-                    android:dividerHeight="0dp"
-                    android:scrollbars="none"
-                    android:paddingHorizontal="12dp"
-                    android:paddingBottom="12dp" />
-
+                    android:layout_height="300dp"
+                    android:nestedScrollingEnabled="true" />
             </LinearLayout>
-            <!-- 🔥 END NEW LISTVIEW SECTION 🔥 -->
 
-            <!-- ===== SHOP BY CATEGORY (UNCHANGED) ===== -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:background="#FFFFFF"
                 android:layout_marginTop="8dp"
-                android:padding="12dp">
-
-                <!-- [KEEP ALL CATEGORY GRID] -->
-                <GridLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:columnCount="4" android:rowCount="2">
-                    <!-- Gaming, Adult, Kids, Toys, etc. -->
-                </GridLayout>
-
+                android:orientation="vertical">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="16dp" android:text="🏢 TOP BRANDS" android:textStyle="bold" />
+                <ListView
+                    android:id="@+id/listViewTopBrands"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:nestedScrollingEnabled="true" />
             </LinearLayout>
 
-            <View android:layout_width="match_parent" android:layout_height="16dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFFFFF"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:padding="16dp" android:text="✨ RECOMMENDED FOR YOU" android:textStyle="bold" />
+                <ListView
+                    android:id="@+id/listViewRecommended"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:nestedScrollingEnabled="true" />
+            </LinearLayout>
+
+            <Button android:id="@+id/btnShopNow" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Featured Product" android:layout_margin="10dp"/>
 
         </LinearLayout>
-
     </androidx.core.widget.NestedScrollView>
-
-    <!-- ===== BOTTOM NAVIGATION (UNCHANGED) ===== -->
-    <LinearLayout android:layout_width="match_parent" android:layout_height="60dp" android:layout_gravity="bottom" android:background="#FFFFFF" android:orientation="horizontal" android:elevation="8dp">
-        <!-- [KEEP ALL 5 BOTTOM NAV ITEMS] -->
-    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

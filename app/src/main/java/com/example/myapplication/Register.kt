@@ -8,16 +8,11 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.switchmaterial.SwitchMaterial  // FIX: removed duplicate import of SwitchMaterial from android.widget
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import java.text.SimpleDateFormat
 import java.util.*
-
-// FIX 1: Removed duplicate conflicting import (android.widget.SwitchMaterial + com.google.android.material.switchmaterial.SwitchMaterial)
-// FIX 2: setContentView uses correct layout R.layout.signup (the actual file is signup.xml)
-// FIX 3: After successful registration, navigate to MainActivity (Login) not HomeActivity
-//         Registration should go back to login so user logs in with their new account
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -31,29 +26,40 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.signup)  // FIX: was R.layout.activity_register (file doesn't exist)
+        // FIX: Ensure your XML file is named 'signup.xml' in res/layout
+        setContentView(R.layout.signup)
 
-        initViews()
-        setupClickListeners()
+        try {
+            initViews()
+            setupClickListeners()
+        } catch (e: Exception) {
+            // This helps you see in Logcat exactly which View ID is missing
+            e.printStackTrace()
+            Toast.makeText(this, "Error initializing views: ${e.message}", Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun initViews() {
-        etName               = findViewById(R.id.etName)
-        etEmail              = findViewById(R.id.etEmail)
-        etDOB                = findViewById(R.id.etDOB)
-        etPassword           = findViewById(R.id.etPassword)
-        tvAge                = findViewById(R.id.tvAge)
+        // IMPORTANT: These IDs MUST exist in signup.xml
+        etName = findViewById(R.id.etName)
+        etEmail = findViewById(R.id.etEmail)
+        etDOB = findViewById(R.id.etDOB)
+        etPassword = findViewById(R.id.etPassword)
+        tvAge = findViewById(R.id.tvAge)
         switchAgeConfirmation = findViewById(R.id.switchAgeConfirmation)
-        btnRegister          = findViewById(R.id.btnRegister)
+        btnRegister = findViewById(R.id.btnRegister)
     }
 
     private fun setupClickListeners() {
+        // Using a safe find for the back button
         val btnBack = findViewById<ImageButton>(R.id.btnBack)
-
-        btnBack.setOnClickListener {
-            finish()  // Back to Login
+        btnBack?.setOnClickListener {
+            finish()
         }
 
+        // Fix: Make the EditText non-editable so user MUST use the picker
+        etDOB.isFocusable = false
+        etDOB.isClickable = true
         etDOB.setOnClickListener {
             showDatePicker()
         }
@@ -65,9 +71,9 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()
-        val year  = calendar.get(Calendar.YEAR)
+        val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
-        val day   = calendar.get(Calendar.DAY_OF_MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
 
         val datePicker = DatePickerDialog(
             this,
@@ -79,7 +85,7 @@ class RegisterActivity : AppCompatActivity() {
                 etDOB.setText(formattedDate)
                 calculateAge(selectedDate)
             },
-            year - 20, month, day
+            year - 18, month, day // Default to 18 years ago
         )
         datePicker.datePicker.maxDate = System.currentTimeMillis()
         datePicker.show()
@@ -88,47 +94,45 @@ class RegisterActivity : AppCompatActivity() {
     private fun calculateAge(birthDate: Calendar) {
         val today = Calendar.getInstance()
         var age = today.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR)
+
         if (today.get(Calendar.DAY_OF_YEAR) < birthDate.get(Calendar.DAY_OF_YEAR)) {
             age--
         }
 
         tvAge.text = when {
-            age < 18  -> "⚠️ Age: $age years (Minor - Limited access)"
-            age >= 18 -> "✅ Age: $age years (Full access including 18+)"
-            else      -> "Enter valid DOB"
+            age < 18 -> "⚠️ Age: $age years (Minor)"
+            else -> "✅ Age: $age years (Full Access)"
         }
 
-        tvAge.setBackgroundColor(
-            if (age >= 18) 0xFF4CAF50.toInt() else 0xFFFF9800.toInt()
-        )
+        // Use a standard Android color if hex fails
+        tvAge.setTextColor(if (age >= 18) android.graphics.Color.GREEN else android.graphics.Color.RED)
     }
 
     private fun performRegistration() {
-        val name         = etName.text.toString().trim()
-        val email        = etEmail.text.toString().trim()
-        val dob          = etDOB.text.toString().trim()
-        val password     = etPassword.text.toString().trim()
+        val name = etName.text.toString().trim()
+        val email = etEmail.text.toString().trim()
+        val dob = etDOB.text.toString().trim()
+        val password = etPassword.text.toString().trim()
         val ageConfirmed = switchAgeConfirmation.isChecked
 
+        // Reset errors first
+        findViewById<TextInputLayout>(R.id.tilName).error = null
+        findViewById<TextInputLayout>(R.id.tilEmail).error = null
+        findViewById<TextInputLayout>(R.id.tilDOB).error = null
+        findViewById<TextInputLayout>(R.id.tilPassword).error = null
+
         when {
-            name.isEmpty() ->
-                showError(findViewById(R.id.tilName), "Name is required")
+            name.isEmpty() -> showError(findViewById(R.id.tilName), "Name is required")
             email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() ->
                 showError(findViewById(R.id.tilEmail), "Valid email is required")
-            dob.isEmpty() ->
-                showError(findViewById(R.id.tilDOB), "Date of birth is required")
-            password.length < 6 ->
-                showError(findViewById(R.id.tilPassword), "Password must be 6+ characters")
-            !ageConfirmed ->
-                Toast.makeText(this, "Please confirm age restriction", Toast.LENGTH_SHORT).show()
+            dob.isEmpty() -> showError(findViewById(R.id.tilDOB), "Date of birth is required")
+            password.length < 6 -> showError(findViewById(R.id.tilPassword), "Password must be 6+ characters")
+            !ageConfirmed -> Toast.makeText(this, "Please confirm age restriction", Toast.LENGTH_SHORT).show()
             else -> {
-                Toast.makeText(this, "Account created for $name! 🎉", Toast.LENGTH_LONG).show()
-
-                // FIX: Navigate back to Login (MainActivity) after registration
-                // Pass registered email so login screen can pre-fill it
-                val intent = Intent(this, MainActivity::class.java).apply {
-                    putExtra("registered_email", email)
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                Toast.makeText(this, "Welcome, $name!", Toast.LENGTH_LONG).show()
+                val intent = Intent(this, Dashboard::class.java).apply {
+                    putExtra("user_name", name)
+                    putExtra("user_email", email)
                 }
                 startActivity(intent)
                 finish()
@@ -136,9 +140,8 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    private fun showError(inputLayout: TextInputLayout, error: String) {
-        inputLayout.error = error
-        inputLayout.editText?.requestFocus()
-        Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
+    private fun showError(inputLayout: TextInputLayout?, error: String) {
+        inputLayout?.error = error
+        inputLayout?.editText?.requestFocus()
     }
 }

@@ -9,9 +9,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
 
-// FIX 1: setContentView now uses R.layout.forgotpassword (the actual file is forgotpassword.xml)
-// FIX 2: Removed navigation to VerificationActivity (doesn't exist) — shows confirmation Toast
-//         and goes back to Login (MainActivity) instead
 
 class ForgotPasswordActivity : AppCompatActivity() {
 

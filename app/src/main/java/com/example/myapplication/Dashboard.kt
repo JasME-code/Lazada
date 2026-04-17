@@ -1,158 +1,143 @@
 package com.example.myapplication
 
 import android.animation.ObjectAnimator
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.view.ViewGroup
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import androidx.cardview.widget.CardView
-import androidx.core.widget.NestedScrollView
-import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.textfield.TextInputEditText
 
-class HomeActivity : AppCompatActivity() {
+class Dashboard : AppCompatActivity() {
 
-    private lateinit var appBarLayout: AppBarLayout
-    private lateinit var collapsingToolbar: CollapsingToolbarLayout
-    private lateinit var promoStrip: View
-    private lateinit var headerFull: View
-    private lateinit var compactToolbar: Toolbar
+    // Data for the 3 different lists
+    private val flashSaleProducts = listOf(
+        Product(1, "Nike Pegasus 42", 5999.0, 4.9f, "Nike Official", R.drawable.img),
+        Product(2, "Razer BlackShark V2", 3999.0, 4.8f, "Razer Store", R.drawable.img),
+        Product(3, "LEGO Classic 500pcs", 1799.0, 4.9f, "Toy Kingdom", R.drawable.img),
+        Product(4, "Samsung Galaxy Buds", 3499.0, 4.6f, "Samsung Store", R.drawable.img)
+    )
+
+    private val topBrands = listOf(
+        Product(101, "Samsung Galaxy S24", 58999.0, 4.9f, "Samsung Official", R.drawable.img),
+        Product(102, "Sony WH-1000XM5", 19999.0, 4.8f, "Sony Store", R.drawable.img)
+    )
+
+    private val recommendedItems = listOf(
+        Product(201, "Cotton T-Shirt", 499.0, 4.5f, "Fashion PH", R.drawable.img),
+        Product(202, "Minimalist Watch", 2499.0, 4.7f, "TimeKeeper", R.drawable.img)
+    )
+
+    private var timerSeconds = 59
+    private var timerMinutes = 59
+    private var timerHours   = 11
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home) // Your advanced dashboard XML
+        setContentView(R.layout.dashboard)
 
         setupViews()
-        setupUserData()
+        setupThreeLists()
         setupClickListeners()
         startTimerAnimation()
     }
 
     private fun setupViews() {
-        appBarLayout = findViewById(R.id.appBarLayout)
-        collapsingToolbar = findViewById(R.id.collapsingToolbar)
-        promoStrip = findViewById(R.id.promoStrip)
-        headerFull = findViewById(R.id.headerFull)
-        compactToolbar = findViewById(R.id.compactToolbar)
+        val userEmail = intent.getStringExtra("user_email") ?: "User"
+        Toast.makeText(this, "Welcome, $userEmail! 🎉", Toast.LENGTH_SHORT).show()
 
-        // Search functionality
         setupSearch(findViewById(R.id.etSearchFull), findViewById(R.id.btnSearchFull))
         setupSearch(findViewById(R.id.etSearchCompact), findViewById(R.id.btnSearchCompact))
     }
 
-    private fun setupUserData() {
-        val userEmail = intent.getStringExtra("user_email") ?: "User"
-        // You can add welcome text here if needed
-        Toast.makeText(this, "Welcome to Dashboard, $userEmail! 🎉", Toast.LENGTH_SHORT).show()
+    private fun setupThreeLists() {
+        val lvFlash = findViewById<ListView>(R.id.listViewFlashSale)
+        val lvBrands = findViewById<ListView>(R.id.listViewTopBrands)
+        val lvRec = findViewById<ListView>(R.id.listViewRecommended)
+
+        lvFlash.adapter = ProductAdapter(this, flashSaleProducts)
+        lvBrands.adapter = ProductAdapter(this, topBrands)
+        lvRec.adapter = ProductAdapter(this, recommendedItems)
+
+        // CLICK LISTENER: Opens Detail Screen
+        val clickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
+            val selectedProduct = parent.getItemAtPosition(position) as Product
+            val intent = Intent(this, ProductDetailActivity::class.java).apply {
+                putExtra("PRODUCT_DATA", selectedProduct)
+            }
+            startActivity(intent)
+        }
+
+        lvFlash.onItemClickListener = clickListener
+        lvBrands.onItemClickListener = clickListener
+        lvRec.onItemClickListener = clickListener
     }
 
     private fun setupClickListeners() {
-        // Hero banner
-        findViewById<Button>(R.id.btnShopNow).setOnClickListener {
-            Toast.makeText(this, "Shop Pegasus 42 Now! 🏃‍♂️", Toast.LENGTH_SHORT).show()
-        }
-
-        // Quick links
-        findViewById<View>(R.id.btnTopUp).setOnClickListener {
-            Toast.makeText(this, "Top Up clicked", Toast.LENGTH_SHORT).show()
-        }
-
-        findViewById<View>(R.id.btnLazMall).setOnClickListener {
-            Toast.makeText(this, "LazMall clicked", Toast.LENGTH_SHORT).show()
-        }
-
-        // Flash sale
-        findViewById<TextView>(R.id.tvShopAll).setOnClickListener {
-            Toast.makeText(this, "View all flash sale items", Toast.LENGTH_SHORT).show()
-        }
-
-        // Category buttons
-        setupCategoryButtons()
-
-        // Bottom nav
-        setupBottomNavigation()
-    }
-
-    private fun setupSearch(searchEditText: TextInputEditText, searchButton: View) {
-        searchButton.setOnClickListener {
-            val query = searchEditText.text.toString()
-            if (query.isNotEmpty()) {
-                Toast.makeText(this, "Searching for: $query 🔍", Toast.LENGTH_SHORT).show()
-                // Navigate to search results
+        // FIXED: Now goes to CartActivity first as the "Barrier"
+        findViewById<View>(R.id.btnCartIcon).setOnClickListener {
+            if (CartManager.cartList.isEmpty()) {
+                Toast.makeText(this, "Your cart is empty!", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, "Enter search term", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, CartActivity::class.java)
+                startActivity(intent)
             }
         }
+
+        // Quick action buttons
+        findViewById<View>(R.id.btnShopNow)?.setOnClickListener { Toast.makeText(this, "Featured Promo", Toast.LENGTH_SHORT).show() }
+        findViewById<View>(R.id.btnTopUp)?.setOnClickListener { Toast.makeText(this, "Top Up Service", Toast.LENGTH_SHORT).show() }
+        findViewById<View>(R.id.btnLazMall)?.setOnClickListener { Toast.makeText(this, "LazMall Official", Toast.LENGTH_SHORT).show() }
     }
 
-    private fun setupCategoryButtons() {
-        findViewById<View>(R.id.btnGamingProducts)?.setOnClickListener {
-            Toast.makeText(this, "Gaming Products", Toast.LENGTH_SHORT).show()
+    private fun setupSearch(searchEditText: TextInputEditText?, searchButton: View?) {
+        searchButton?.setOnClickListener {
+            val query = searchEditText?.text.toString().trim()
+            if (query.isNotEmpty()) Toast.makeText(this, "Searching: $query", Toast.LENGTH_SHORT).show()
         }
-
-        findViewById<View>(R.id.btnAdultProducts)?.setOnClickListener {
-            Toast.makeText(this, "Adult Products", Toast.LENGTH_SHORT).show()
-        }
-
-        findViewById<View>(R.id.btnKidsProducts)?.setOnClickListener {
-            Toast.makeText(this, "Kids Products", Toast.LENGTH_SHORT).show()
-        }
-
-        findViewById<View>(R.id.btnToysProducts)?.setOnClickListener {
-            Toast.makeText(this, "Toys Products", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun setupBottomNavigation() {
-        // Home (active)
-        findViewById<View>(android.R.id.content).setOnClickListener {
-            Toast.makeText(this, "Already on Home", Toast.LENGTH_SHORT).show()
-        }
-
-        // Other tabs
-        val bottomNavItems = listOf("Search", "Orders", "Saved", "Me")
-        // Add more bottom nav logic here
     }
 
     private fun startTimerAnimation() {
         val handler = Handler(Looper.getMainLooper())
-        val timerRunnable = object : Runnable {
+        handler.post(object : Runnable {
             override fun run() {
                 updateTimer()
                 handler.postDelayed(this, 1000)
             }
-        }
-        handler.post(timerRunnable)
+        })
     }
 
     private fun updateTimer() {
-        val hours = findViewById<TextView>(R.id.tvTimerHours)
-        val mins = findViewById<TextView>(R.id.tvTimerMins)
-        val secs = findViewById<TextView>(R.id.tvTimerSecs)
-
-        // Animate countdown (demo)
-        animateTimerDigit(secs, (secs.text.toString().toInt() - 1).toString())
+        if (--timerSeconds < 0) {
+            timerSeconds = 59
+            if (--timerMinutes < 0) {
+                timerMinutes = 59
+                if (--timerHours < 0) timerHours = 0
+            }
+        }
+        findViewById<TextView>(R.id.tvTimerHours)?.text = "%02d".format(timerHours)
+        findViewById<TextView>(R.id.tvTimerMins)?.text = "%02d".format(timerMinutes)
+        findViewById<TextView>(R.id.tvTimerSecs)?.text = "%02d".format(timerSeconds)
     }
 
-    private fun animateTimerDigit(view: TextView, newValue: String) {
-        val animator = ObjectAnimator.ofFloat(view, "scaleX", 1f, 0.8f, 1f)
-        animator.duration = 200
-        animator.start()
-        view.text = newValue
-    }
+    // --- ADAPTER ---
+    class ProductAdapter(context: Context, private val products: List<Product>) : BaseAdapter() {
+        private val inflater = LayoutInflater.from(context)
+        override fun getCount() = products.size
+        override fun getItem(position: Int) = products[position]
+        override fun getItemId(position: Int) = position.toLong()
 
-    // Logout functionality
-    fun logout(view: View) {
-        val intent = Intent(this, SplashActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+            val view = convertView ?: inflater.inflate(android.R.layout.simple_list_item_2, parent, false)
+            val product = getItem(position)
+            view.findViewById<TextView>(android.R.id.text1).text = product.name
+            view.findViewById<TextView>(android.R.id.text2).text = "₱${product.price} - ${product.seller}"
+            return view
+        }
     }
 }

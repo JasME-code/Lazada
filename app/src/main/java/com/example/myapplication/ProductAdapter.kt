@@ -11,7 +11,6 @@ import android.widget.TextView
 
 class ProductAdapter(context: Context, products: List<Product>) :
     ArrayAdapter<Product>(context, 0, products) {
-
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = convertView ?: LayoutInflater.from(context)
             .inflate(R.layout.item_product_list, parent, false)

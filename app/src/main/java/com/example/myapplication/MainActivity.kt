@@ -9,13 +9,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
 
-// FIX 1: Removed enableEdgeToEdge() — causes crash without proper setup
-// FIX 2: setContentView now uses R.layout.activity_main (the actual login XML file)
-// FIX 3: Removed ViewCompat insets listener (paired with enableEdgeToEdge, caused crash)
-// FIX 4: forgotPassword click now navigates to ForgotPasswordActivity via Intent
-// FIX 5: registerLink click now navigates to RegisterActivity via Intent
-// FIX 6: Login navigates to HomeActivity and passes user_email correctly
-
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +36,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 else -> {
                     // Navigate to Dashboard, pass user email
-                    val intent = Intent(this, HomeActivity::class.java).apply {
+                    val intent = Intent(this, Dashboard::class.java).apply {
                         putExtra("user_email", email)
                     }
                     startActivity(intent)
