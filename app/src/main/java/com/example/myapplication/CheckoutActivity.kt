@@ -18,7 +18,6 @@ class CheckoutActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activitycheckout)  // FIX: was R.layout.activity_checkout
-
         // Receive Intent data from CartActivity or ProductDetailActivity
         val productName  = intent.getStringExtra("checkout_product_name")  ?: "Unknown Product"
         val productPrice = intent.getDoubleExtra("checkout_product_price", 0.0)

@@ -33,20 +33,54 @@
                 app:layout_collapseMode="parallax">
 
                 <!-- [YOUR EXISTING PROMO STRIP] -->
-                <LinearLayout android:id="@+id/promoStrip" android:layout_width="match_parent" android:layout_height="30dp" android:background="#FFFFFF" android:orientation="horizontal" android:gravity="center_vertical" android:paddingHorizontal="12dp">
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
+            app:titleEnabled="false">
+
+            <!-- Promo Strip + Full Header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_collapseMode="parallax">
+
+                <!-- Promo Strip -->
+                <LinearLayout
+                    android:id="@+id/promoStrip"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:background="#FFFFFF"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="12dp">
                     <!-- [KEEP ALL 4 TEXTVIEWS] -->
                 </LinearLayout>
 
-                <!-- [YOUR EXISTING HEADER FULL] -->
-                <LinearLayout android:id="@+id/headerFull" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/lazada_gradient_header" android:orientation="vertical" android:padding="10dp">
+                <!-- Header Full -->
+                <LinearLayout
+                    android:id="@+id/headerFull"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/lazada_gradient_header"
+                    android:orientation="vertical"
+                    android:padding="10dp">
                     <!-- [KEEP ALL SEARCH + LOGO] -->
                 </LinearLayout>
 
             </LinearLayout>
-
         </com.google.android.material.appbar.CollapsingToolbarLayout>
-        <androidx.appcompat.widget.Toolbar android:id="@+id/compactToolbar" android:layout_width="match_parent" android:layout_height="52dp" android:background="@drawable/lazada_gradient_header" android:paddingHorizontal="10dp" app:layout_scrollFlags="noScroll">
-        </androidx.appcompat.widget.Toolbar>
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/compactToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@drawable/lazada_gradient_header"
+            android:paddingHorizontal="10dp"
+            app:layout_scrollFlags="noScroll" />
+
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -62,15 +96,113 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- ===== HERO BANNER (UNCHANGED) ===== -->
-            <FrameLayout android:layout_width="match_parent" android:layout_height="180dp" android:background="#111111">
-                <!-- [KEEP ALL HERO CONTENT] -->
-            </FrameLayout>
+            <!-- ===== QUICK LINKS (IMPROVED) ===== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:orientation="horizontal"
+                android:background="#FFFFFF"
+                android:paddingHorizontal="12dp"
+                android:gravity="center">
 
-            <!-- ===== QUICK LINKS (UNCHANGED) ===== -->
-            <LinearLayout android:id="@+id/btnTopUp" android:layout_width="0dp" android:layout_height="72dp" android:layout_weight="1">
-                <!-- [KEEP TOP UP + LAZMALL] -->
+                <!-- Top Up -->
+                <LinearLayout
+                    android:id="@+id/btnTopUp"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_topup"
+                        android:contentDescription="Top Up" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Top Up"
+                        android:textSize="12sp"
+                        android:textColor="#1A1A1A"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+
+                <!-- LazMall -->
+                <LinearLayout
+                    android:id="@+id/btnLazMall"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_lazmall"
+                        android:contentDescription="LazMall" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="LazMall"
+                        android:textSize="12sp"
+                        android:textColor="#1A1A1A"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+
+                <!-- Vouchers -->
+                <LinearLayout
+                    android:id="@+id/btnVouchers"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_voucher"
+                        android:contentDescription="Vouchers" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Vouchers"
+                        android:textSize="12sp"
+                        android:textColor="#1A1A1A"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+
+                <!-- Wallet -->
+                <LinearLayout
+                    android:id="@+id/btnWallet"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:src="@drawable/ic_wallet"
+                        android:contentDescription="Wallet" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Wallet"
+                        android:textSize="12sp"
+                        android:textColor="#1A1A1A"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+
             </LinearLayout>
+
 
             <!-- ===== FLASH SALE (UNCHANGED HEADER + HORIZONTAL SCROLL) ===== -->
             <LinearLayout
