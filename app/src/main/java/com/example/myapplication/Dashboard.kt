@@ -65,6 +65,7 @@ class Dashboard : AppCompatActivity() {
                 R.drawable.img,
                 "Shoes",
                 15,
+                "Mesh upper, Zoom Air unit", // <-- Added 'specs'
                 "Responsive foam.",
                 listOf("Comfy"),
                 false
@@ -80,6 +81,7 @@ class Dashboard : AppCompatActivity() {
                 R.drawable.img,
                 "Electronics",
                 5,
+                "Age-verified hardware",     // <-- Added 'specs'
                 "Restricted access.",
                 listOf("Quality"),
                 true
@@ -95,6 +97,7 @@ class Dashboard : AppCompatActivity() {
                 R.drawable.img,
                 "Electronics",
                 0,
+                "THX Spatial Audio, 50mm drivers", // <-- Added 'specs'
                 "Spatial Audio.",
                 listOf("Best mic"),
                 false
