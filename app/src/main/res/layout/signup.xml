@@ -16,7 +16,6 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Back"
             android:src="@android:drawable/ic_menu_revert"
             app:tint="#212121"
             app:layout_constraintStart_toStartOf="parent"
@@ -35,24 +34,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btnBack" />
 
+        <!-- Fields: Name, Email, DOB -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilName"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="24dp"
             app:boxStrokeColor="#FF6900"
-            app:hintTextColor="#FF6900"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTitle">
-
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Full Name"
-                android:inputType="textPersonName" />
+                android:hint="Full Name" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -60,19 +57,16 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
             app:boxStrokeColor="#FF6900"
-            app:hintTextColor="#FF6900"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tilName">
-
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Email"
-                android:inputType="textEmailAddress" />
+                android:hint="Email" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -80,50 +74,41 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
             app:boxStrokeColor="#FF6900"
-            app:endIconMode="clear_text"
-            app:hintTextColor="#FF6900"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tilEmail">
-
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etDOB"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Date of Birth (MM/DD/YYYY)"
-                android:inputType="date"
-                android:maxLength="10" />
+                android:hint="Date of Birth"
+                android:focusable="false" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:id="@+id/tvAge"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:background="#E0E0E0"
+            android:layout_marginTop="8dp"
             android:gravity="center"
-            android:padding="12dp"
-            android:text="Enter DOB to see your age"
-            android:textColor="#212121"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:text="Select birth date"
+            app:layout_constraintTop_toBottomOf="@id/tilDOB"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tilDOB" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilPassword"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
             app:boxStrokeColor="#FF6900"
-            app:endIconMode="password_toggle"
-            app:hintTextColor="#FF6900"
+            app:passwordToggleEnabled="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvAge">
-
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPassword"
                 android:layout_width="match_parent"
@@ -132,56 +117,67 @@
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Age Restriction Section -->
+        <!-- ACCOUNT TYPE SELECTION -->
         <TextView
-            android:id="@+id/tvAgeRestrictionTitle"
-            android:layout_width="0dp"
+            android:id="@+id/tvAccountLabel"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Age Restriction"
-            android:textColor="#D32F2F"
-            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:text="Account Type:"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tilPassword" />
+            app:layout_constraintTop_toBottomOf="@id/tilPassword"
+            app:layout_constraintStart_toStartOf="parent" />
 
+        <RadioGroup
+            android:id="@+id/rgAccountType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/tvAccountLabel">
+
+            <RadioButton
+                android:id="@+id/rbCustomer"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Customer"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/rbSeller"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Seller" />
+        </RadioGroup>
+
+        <!-- AGE RESTRICTION -->
         <TextView
             android:id="@+id/tvAgeRestriction"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
-            android:text="⚠️ Users under 18 can only access age-appropriate content (18+ products restricted)\nUsers 18+ can access all products including adult content"
-            android:textColor="#B71C1C"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"
+            android:text="⚠️ 18+ required for specific categories."
+            android:textColor="#D32F2F"
+            app:layout_constraintTop_toBottomOf="@id/rgAccountType"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvAgeRestrictionTitle" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switchAgeConfirmation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="I confirm I am 18+ or my parent/guardian approves"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvAgeRestriction" />
+            android:text="I agree to terms"
+            app:layout_constraintTop_toBottomOf="@id/tvAgeRestriction"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRegister"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="24dp"
             android:text="CREATE ACCOUNT"
-            android:textSize="16sp"
-            android:textStyle="bold"
             app:backgroundTint="#FF6900"
-            app:cornerRadius="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/switchAgeConfirmation" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

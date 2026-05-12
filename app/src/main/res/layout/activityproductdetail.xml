@@ -22,7 +22,7 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:src="@android:drawable/ic_menu_revert"
-            />
+            app:tint="#FFFFFF" />
 
         <TextView
             android:layout_width="0dp"
@@ -56,7 +56,7 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/img" />
 
-            <!-- Product Info Card -->
+            <!-- Main Info Card -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -86,13 +86,24 @@
                         android:layout_marginTop="6dp"
                         android:text="Product Name"
                         android:textColor="#212121"
-                        android:textSize="16sp" />
+                        android:textSize="18sp" />
+
+                    <!-- Stock Status (Missing Part Added) -->
+                    <TextView
+                        android:id="@+id/tvStockStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="In Stock"
+                        android:textColor="#2E7D32"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tvProductRating"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="8dp"
                         android:text="⭐ 0.0 / 5.0"
                         android:textColor="#FF9800"
                         android:textSize="14sp" />
@@ -101,11 +112,86 @@
                         android:id="@+id/tvProductSeller"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="4dp"
                         android:text="Sold by: Seller"
                         android:textColor="#757575"
                         android:textSize="13sp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
+            <!-- Specifications Card (Missing Part Added) -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginBottom="8dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Specifications"
+                        android:textColor="#212121"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvProductSpecs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="No specifications available."
+                        android:textColor="#616161"
+                        android:textSize="14sp"
+                        android:lineSpacingExtra="4dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Reviews Card (Missing Part Added) -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="User Reviews"
+                        android:textColor="#212121"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <!-- Container where code will inject reviews -->
+                    <LinearLayout
+                        android:id="@+id/llReviewsContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="No reviews yet."
+                            android:textColor="#9E9E9E"
+                            android:textSize="14sp" />
+                    </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -123,22 +209,18 @@
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAddToCart"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginEnd="4dp"
             android:layout_weight="1"
-            android:backgroundTint="#FFFFFF"
-            android:strokeColor="#F57224"
             android:text="ADD TO CART"
             android:textColor="#F57224"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            app:strokeWidth="1dp"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+            app:strokeColor="#F57224" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnBuyNow"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -146,9 +228,7 @@
             android:layout_weight="1"
             android:backgroundTint="#F57224"
             android:text="BUY NOW"
-            android:textColor="#FFFFFF"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textColor="#FFFFFF" />
 
     </LinearLayout>
 

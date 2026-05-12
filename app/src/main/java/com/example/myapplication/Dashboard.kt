@@ -1,6 +1,5 @@
 package com.example.myapplication
 
-import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -15,23 +14,15 @@ import com.google.android.material.textfield.TextInputEditText
 
 class Dashboard : AppCompatActivity() {
 
-    // Data for the 3 different lists
-    private val flashSaleProducts = listOf(
-        Product(1, "Nike Pegasus 42", 5999.0, 4.9f, "Nike Official", R.drawable.img),
-        Product(2, "Razer BlackShark V2", 3999.0, 4.8f, "Razer Store", R.drawable.img),
-        Product(3, "LEGO Classic 500pcs", 1799.0, 4.9f, "Toy Kingdom", R.drawable.img),
-        Product(4, "Samsung Galaxy Buds", 3499.0, 4.6f, "Samsung Store", R.drawable.img)
-    )
+    // COMPANION OBJECT: This makes the list "Global"
+    // Now SellerDashboard can do: Dashboard.productList.add(item)
+    companion object {
+        val productList = mutableListOf<Product>()
+    }
 
-    private val topBrands = listOf(
-        Product(101, "Samsung Galaxy S24", 58999.0, 4.9f, "Samsung Official", R.drawable.img),
-        Product(102, "Sony WH-1000XM5", 19999.0, 4.8f, "Sony Store", R.drawable.img)
-    )
-
-    private val recommendedItems = listOf(
-        Product(201, "Cotton T-Shirt", 499.0, 4.5f, "Fashion PH", R.drawable.img),
-        Product(202, "Minimalist Watch", 2499.0, 4.7f, "TimeKeeper", R.drawable.img)
-    )
+    private var displayList = mutableListOf<Product>()
+    private lateinit var productAdapter: ProductAdapter
+    private var userAge: Int = 0
 
     private var timerSeconds = 59
     private var timerMinutes = 59
@@ -41,64 +32,144 @@ class Dashboard : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.dashboard)
 
-        setupViews()
-        setupThreeLists()
-        setupClickListeners()
+        // Initialize with default items ONLY if the list is empty
+        if (productList.isEmpty()) {
+            loadDefaultProducts()
+        }
+
+        val user = intent.getParcelableExtra<User>("USER_DATA")
+        userAge = user?.age ?: 0
+
+        setupViews(user)
+        setupProductList()
+        setupFilters()
+        setupClickListeners(user?.accountType ?: "Customer")
         startTimerAnimation()
+        simulateOrderUpdateNotification()
     }
 
-    private fun setupViews() {
-        val userEmail = intent.getStringExtra("user_email") ?: "User"
-        Toast.makeText(this, "Welcome, $userEmail! 🎉", Toast.LENGTH_SHORT).show()
+    // Refresh the list whenever we return from the Seller screen
+    override fun onResume() {
+        super.onResume()
+        filterAndRefreshList()
+    }
+
+    private fun loadDefaultProducts() {
+        productList.add(
+            Product(
+                1,
+                "Nike Pegasus 42",
+                5999.0,
+                4.9f,
+                "Nike Official",
+                R.drawable.img,
+                "Shoes",
+                15,
+                "Responsive foam.",
+                listOf("Comfy"),
+                false
+            )
+        )
+        productList.add(
+            Product(
+                2,
+                "Restricted Item (18+)",
+                9999.0,
+                4.8f,
+                "Premium Store",
+                R.drawable.img,
+                "Electronics",
+                5,
+                "Restricted access.",
+                listOf("Quality"),
+                true
+            )
+        )
+        productList.add(
+            Product(
+                3,
+                "Razer BlackShark V2",
+                3999.0,
+                4.7f,
+                "Razer Store",
+                R.drawable.img,
+                "Electronics",
+                0,
+                "Spatial Audio.",
+                listOf("Best mic"),
+                false
+            )
+        )
+    }
+
+    private fun setupViews(user: User?) {
+        val welcome = if (user != null) "Welcome, ${user.name}!" else "Welcome!"
+        Toast.makeText(this, welcome, Toast.LENGTH_SHORT).show()
 
         setupSearch(findViewById(R.id.etSearchFull), findViewById(R.id.btnSearchFull))
-        setupSearch(findViewById(R.id.etSearchCompact), findViewById(R.id.btnSearchCompact))
     }
 
-    private fun setupThreeLists() {
+    private fun setupProductList() {
         val lvFlash = findViewById<ListView>(R.id.listViewFlashSale)
-        val lvBrands = findViewById<ListView>(R.id.listViewTopBrands)
-        val lvRec = findViewById<ListView>(R.id.listViewRecommended)
 
-        lvFlash.adapter = ProductAdapter(this, flashSaleProducts)
-        lvBrands.adapter = ProductAdapter(this, topBrands)
-        lvRec.adapter = ProductAdapter(this, recommendedItems)
+        productAdapter = ProductAdapter(this, displayList)
+        lvFlash.adapter = productAdapter
 
-        // CLICK LISTENER: Opens Detail Screen
-        val clickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
-            val selectedProduct = parent.getItemAtPosition(position) as Product
+        filterAndRefreshList()
+
+        lvFlash.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
+            val selected = parent.getItemAtPosition(position) as Product
             val intent = Intent(this, ProductDetailActivity::class.java).apply {
-                putExtra("PRODUCT_DATA", selectedProduct)
+                putExtra("PRODUCT_DATA", selected)
+                putExtra("USER_AGE", userAge)
             }
             startActivity(intent)
         }
-
-        lvFlash.onItemClickListener = clickListener
-        lvBrands.onItemClickListener = clickListener
-        lvRec.onItemClickListener = clickListener
     }
 
-    private fun setupClickListeners() {
-        // FIXED: Now goes to CartActivity first as the "Barrier"
-        findViewById<View>(R.id.btnCartIcon).setOnClickListener {
-            if (CartManager.cartList.isEmpty()) {
-                Toast.makeText(this, "Your cart is empty!", Toast.LENGTH_SHORT).show()
+    private fun filterAndRefreshList() {
+        val filtered = if (userAge < 18) {
+            productList.filter { !it.isRestricted }
+        } else {
+            productList
+        }
+
+        displayList.clear()
+        displayList.addAll(filtered)
+        productAdapter.notifyDataSetChanged()
+    }
+
+    private fun setupFilters() {
+        findViewById<Button>(R.id.btnSortPrice)?.setOnClickListener {
+            displayList.sortBy { it.price }
+            productAdapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun setupClickListeners(role: String) {
+        // Redirect to Seller Dashboard if they are a seller
+        findViewById<View>(R.id.btnLazMall)?.setOnClickListener {
+            if (role == "Seller") {
+                startActivity(Intent(this, SellerDashboardActivity::class.java))
             } else {
-                val intent = Intent(this, CartActivity::class.java)
-                startActivity(intent)
+                Toast.makeText(this, "LazMall is for Sellers only", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // Quick action buttons
-        findViewById<View>(R.id.btnShopNow)?.setOnClickListener { Toast.makeText(this, "Featured Promo", Toast.LENGTH_SHORT).show() }
-        findViewById<View>(R.id.btnTopUp)?.setOnClickListener { Toast.makeText(this, "Top Up Service", Toast.LENGTH_SHORT).show() }
-        findViewById<View>(R.id.btnLazMall)?.setOnClickListener { Toast.makeText(this, "LazMall Official", Toast.LENGTH_SHORT).show() }
+        findViewById<View>(R.id.btnCartIcon)?.setOnClickListener {
+            startActivity(Intent(this, CartActivity::class.java))
+        }
     }
 
-    private fun setupSearch(searchEditText: TextInputEditText?, searchButton: View?) {
-        searchButton?.setOnClickListener {
-            val query = searchEditText?.text.toString().trim()
-            if (query.isNotEmpty()) Toast.makeText(this, "Searching: $query", Toast.LENGTH_SHORT).show()
+    private fun setupSearch(et: TextInputEditText?, btn: View?) {
+        btn?.setOnClickListener {
+            val query = et?.text.toString().lowercase()
+            val searched = productList.filter {
+                it.name.lowercase().contains(query) && (userAge >= 18 || !it.isRestricted)
+            }
+            displayList.clear()
+            displayList.addAll(searched)
+            productAdapter.notifyDataSetChanged()
         }
     }
 
@@ -125,18 +196,26 @@ class Dashboard : AppCompatActivity() {
         findViewById<TextView>(R.id.tvTimerSecs)?.text = "%02d".format(timerSeconds)
     }
 
-    // --- ADAPTER ---
+    private fun simulateOrderUpdateNotification() {
+        Handler(Looper.getMainLooper()).postDelayed({
+            Toast.makeText(
+                this,
+                "🔔 STATUS UPDATE: Order #LAZ-990 has been SHIPPED!",
+                Toast.LENGTH_LONG
+            ).show()
+        }, 8000)
+    }
+
     class ProductAdapter(context: Context, private val products: List<Product>) : BaseAdapter() {
         private val inflater = LayoutInflater.from(context)
         override fun getCount() = products.size
-        override fun getItem(position: Int) = products[position]
-        override fun getItemId(position: Int) = position.toLong()
-
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            val view = convertView ?: inflater.inflate(android.R.layout.simple_list_item_2, parent, false)
-            val product = getItem(position)
-            view.findViewById<TextView>(android.R.id.text1).text = product.name
-            view.findViewById<TextView>(android.R.id.text2).text = "₱${product.price} - ${product.seller}"
+        override fun getItem(p: Int) = products[p]
+        override fun getItemId(p: Int) = p.toLong()
+        override fun getView(p: Int, v: View?, parent: ViewGroup?): View {
+            val view = v ?: inflater.inflate(android.R.layout.simple_list_item_2, parent, false)
+            val item = getItem(p)
+            view.findViewById<TextView>(android.R.id.text1).text = item.name
+            view.findViewById<TextView>(android.R.id.text2).text = "₱${item.price} • ${item.seller}"
             return view
         }
     }
