@@ -43,5 +43,11 @@
         <activity android:name=".CheckoutActivity"
             android:exported="false" />
 
+        <activity android:name=".AddProductActivity"
+        android:exported="false" />
+
+        <activity android:name=".SellerDashboardActivity"
+            android:exported="false" />
+        <activity android:name=".EditListingsActivity" />
     </application>
 </manifest>

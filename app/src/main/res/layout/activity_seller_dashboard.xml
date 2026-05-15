@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="#F5F5F5">
 
-    <!-- TOP APP BAR (Same style as Dashboard) -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
@@ -19,7 +18,6 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:titleEnabled="false">
 
-            <!-- ORANGE HEADER SECTION -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -36,7 +34,6 @@
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
-                <!-- SALES SUMMARY CARD (Professional Look) -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -78,14 +75,31 @@
             </LinearLayout>
 
             <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin" />
+                app:layout_collapseMode="pin">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/btnLogout"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="16dp"
+                        android:src="@android:drawable/ic_lock_power_off"
+                        app:tint="#FFFFFF" />
+                </RelativeLayout>
+
+            </androidx.appcompat.widget.Toolbar>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- SCROLLABLE SELLER CONTENT -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -97,7 +111,6 @@
             android:orientation="vertical"
             android:padding="12dp">
 
-            <!-- QUICK ACTIONS (Add/Edit) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -125,7 +138,6 @@
                     android:textColor="#F57224" />
             </LinearLayout>
 
-            <!-- ORDERS TO FULFILL SECTION -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -151,20 +163,16 @@
                         android:background="#EEEEEE"
                         android:layout_marginBottom="8dp" />
 
-                    <!-- ORDER LIST -->
                     <ListView
                         android:id="@+id/lvOrdersToFulfill"
                         android:layout_width="match_parent"
                         android:layout_height="500dp"
                         android:divider="@android:color/transparent"
                         android:dividerHeight="8dp"
-                        android:nestedScrollingEnabled="true"
-                        tools:listitem="@android:layout/simple_list_item_1" />
+                        android:nestedScrollingEnabled="true" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
-
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
